@@ -13,6 +13,12 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
+using WinRTXamlToolkit.Controls;
+
+using AgenceRT.AgenceWebService;
+using System.Collections.ObjectModel;
+using AgenceEntites;
+
 // Pour en savoir plus sur le modèle d'élément Page de base, consultez la page http://go.microsoft.com/fwlink/?LinkId=234237
 
 namespace AgenceRT
@@ -22,9 +28,27 @@ namespace AgenceRT
     /// </summary>
     public sealed partial class Agenda : AgenceRT.Common.LayoutAwarePage
     {
+        private ObservableCollection<AgendaEntite> _agendasAffiches = new ObservableCollection<AgendaEntite>();
+
+        public ObservableCollection<AgendaEntite> AgendasAffiches
+        {
+            get { return _agendasAffiches; }
+            set { _agendasAffiches = value; }
+        }
+
+        private Calendar _calendar = new Calendar();
+
+        public Calendar Calendar
+        {
+            get { return _calendar; }
+            set { _calendar = value; }
+        }
+
         public Agenda()
         {
             this.InitializeComponent();
+
+            this.DataContext = this;
         }
 
         /// <summary>
@@ -48,6 +72,31 @@ namespace AgenceRT
         /// <param name="pageState">Dictionnaire vide à remplir à l'aide de l'état sérialisable.</param>
         protected override void SaveState(Dictionary<String, Object> pageState)
         {
+        }
+
+        private async void ChargerBiens()
+        {
+            _agendasAffiches.Clear();
+
+            ObservableCollection<AgendaDTO> agendas;
+            AgenceWebServicesClient ws = new AgenceWebServicesClient();
+
+            agendas = await ws.ChargerListeRendezVousAsync();
+
+            foreach (AgendaDTO agenda in agendas)
+            {
+                AgendaEntite agendaEntite = new AgendaEntite { 
+                                                IdAgenda = agenda.IdAgenda, 
+                                                Date = agenda.Date,
+                                                Description = agenda.Description, 
+                                                Titre = agenda.Titre, 
+                                                Agent = new AgentEntite(),
+                                                Prospect = new ProspectEntite(), 
+                                                Annonce = new AnnonceEntite()
+                                            };
+
+                _agendasAffiches.Add(agendaEntite);
+            }
         }
     }
 }

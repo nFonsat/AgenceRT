@@ -55,27 +55,36 @@ namespace AgenceEntites {
         private AgentEntite _agent = null;
         public AgentEntite Agent {
             get { return _agent; }
-            set { 
-                _agent = value;
+            set {
+                if (_agent != value)
+                {
+                   _agent = value;
                 RaisePropertyChanged(() => Agent);
+                }
             }
         }
 
         private ProspectEntite _prospect = null;
         public ProspectEntite Prospect {
             get { return _prospect; }
-            set { 
-                _prospect = value;
-                RaisePropertyChanged(() => Prospect);
+            set {
+                if (_prospect != value)
+                {
+                    _prospect = value;
+                    RaisePropertyChanged(() => Prospect);
+                }
             }
         }
 
         private AnnonceEntite _annonce = null;
         public AnnonceEntite Annonce {
             get { return _annonce; }
-            set { 
-                _annonce = value;
-                RaisePropertyChanged(() => Annonce);
+            set {
+                if (_annonce != value)
+                {
+                    _annonce = value;
+                    RaisePropertyChanged(() => Annonce);
+                }
             }
         }
     }
